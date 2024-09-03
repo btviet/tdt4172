@@ -2,7 +2,7 @@ import numpy as np
 
 class LinearRegression():
     
-    def __init__(self, learning_rate=0.0001, epochs=40):
+    def __init__(self, learning_rate=0.001, epochs=40):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.weights, self.bias = None, None
@@ -19,9 +19,9 @@ class LinearRegression():
         #grad_w = -2*np.dot(X.T, Y_pred-Y)/n
         #grad_b = -2*(np.sum(Y_pred-Y))/n
 
-        grad_w = - ( 2 * ( X.T ).dot( Y - Y_pred )  ) / n
+        grad_w = -(2*(X.T).dot(Y-Y_pred))/n
        
-        grad_b = - 2 * np.sum( Y - Y_pred ) / n
+        grad_b = -2*np.sum(Y-Y_pred)/n
 
         return grad_w, grad_b
     
@@ -40,7 +40,7 @@ class LinearRegression():
         n = X.shape[0] # Number of data points
         
         self.weights = np.zeros(1) # np.zeros(n)
-        print("self.weights: ", self.weights)
+
         self.bias = 0
         for i in range(self.epochs):
             Y_pred = self.predict( X ) 
@@ -48,8 +48,8 @@ class LinearRegression():
             self.weights = self.weights - self.learning_rate*grad_w
             self.bias = self.bias - self.learning_rate*grad_b
             current_loss = self.MSE(Y, Y_pred)  
-            print(f'Epoch: {i}. Current loss: {current_loss}')
-            print("bias: ", self.bias, "self.weights: ", self.weights[0])
+            self.losses.append(current_loss)
+            # print(f'Epoch: {i}. Current loss: {current_loss}')
     def predict(self, X):
         """
         Generates predictions
