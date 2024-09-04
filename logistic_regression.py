@@ -14,10 +14,12 @@ class LogisticRegression:
         return np.array([self._sigmoid_function(x) for x in X])
 
     def _compute_loss(self, Y, Y_pred):
-        n = Y.shape[0] # Number of data points
+        #print(Y, Y.shape)
+        #print(Y.T)
+        #print(np.log(self._sigmoid(Y_pred)))
         ledd0 = -Y.T.dot(np.log(self._sigmoid(Y_pred)))
         ledd1 = (1-Y).T.dot(np.log(1-self._sigmoid(Y_pred)))
-        return (ledd0+ledd1)/n
+        return np.mean(ledd0+ledd1)
 
     def compute_gradients(self, X, Y, Y_pred):
         n = X.shape[0] # Number of samples
@@ -26,6 +28,10 @@ class LogisticRegression:
         return grad_w, grad_b
     
     def accuracy(self, Y, Y_pred):
+        #print("Y:\n", Y)
+        #print("Y_pred. \n", Y_pred)
+        #print(Y == Y_pred)
+        #print("accuracy: ", np.mean(Y == Y_pred))
         return np.mean(Y == Y_pred)
 
     def fit(self, X, Y):
@@ -43,7 +49,7 @@ class LogisticRegression:
 
         self.bias = 0
         for i in range(self.epochs):
-            lin_model = np.dot(X, self.weights) + self.bias
+            # lin_model = np.dot(X, self.weights) + self.bias
             z = np.dot(X, self.weights) + self.bias # Output from linear model
             Y_pred = self._sigmoid(z)
             grad_w, grad_b = self.compute_gradients(X, Y, Y_pred)  
@@ -51,6 +57,11 @@ class LogisticRegression:
             self.bias = self.bias - self.learning_rate*grad_b
             current_loss = self._compute_loss(Y, Y_pred)  
             self.losses.append(current_loss)
+            Y_binary = [1 if _y > 0.5 else 0 for _y in Y_pred]
+            current_accuracy = self.accuracy(Y, Y_binary)
+            #print("current_accuracy: ", current_accuracy)
+            self.train_accuracies.append(current_accuracy)
+            #print(self.train_accuracies)
             #print(f'Epoch: {i}. Current loss: {current_loss}')
             #print("Weight: ", self.weights, ". Bias: ", self.bias)
 
@@ -68,11 +79,12 @@ class LogisticRegression:
                 A length m array of floats
             """
             z = np.dot(X, self.weights) + self.bias #X*self.weights+ self.bias
+            y_sigmoid = self._sigmoid(z)
             #print("X:", X)
             #print("weights:", self.weights)
             #print("bias: ", self.bias)
             #print("z:",  z)
-            return [1 if _y > 0.5 else 0 for _y in z]
+            return [1 if _y > 0.5 else 0 for _y in y_sigmoid]
             #return np.dot(X, self.weights) + self.bias
             
 
